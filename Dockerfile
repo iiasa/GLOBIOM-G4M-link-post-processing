@@ -7,7 +7,17 @@ ENV TZ=Europe/Vienna \
     DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends wget curl software-properties-common git unzip r-base r-base-dev r-cran-tidyverse
+RUN apt-get update && apt-get install -y --no-install-recommends\
+ wget\
+ curl\
+ software-properties-common\
+ git\
+ unzip\
+ r-base-core\
+ r-base-dev\
+ r-cran-tidyverse
+
+RUN Rscript -e 'install.packages("R.utils")'
 
 # Set GAMS bit architecture, either 'x64_64' or 'x86_32'
 ENV GAMS_BIT_ARC=x64_64
@@ -25,11 +35,13 @@ RUN cd /opt/gams &&\
 COPY gamslice.txt .
 
 # Move license file to GAMS dir and add GAMS dir to user env path
+# Also install GAMS Transfer R from the package tarball included with GAMS.
 RUN GAMS_DIR="$(dirname $(find / -name gams -type f -executable -print))" &&\
     mv gamslice.txt "$GAMS_DIR" &&\
     ln -s "$GAMS_DIR/gams" /usr/local/bin/gams &&\
     echo "export PATH=\$PATH:$GAMS_DIR" >> ~/.bashrc &&\
     cd "$GAMS_DIR" &&\
-    ./gamsinst -a
+    ./gamsinst -a &&\
+    Rscript -e 'install.packages("./apifiles/R/gamstransfer/source/gamstransfer_r.tar.gz", dependencies=TRUE)'
 
 CMD ["R"]

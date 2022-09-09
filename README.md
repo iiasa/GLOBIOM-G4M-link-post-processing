@@ -1,7 +1,9 @@
 # GLOBIOM-G4M-link-post-processing
 
 Containerized post processing for the GLOBIOM G4M link. Installs, GAMS, R,
-and the tidyverse. Based on Debian stable.
+and the tidyverse. Based on Ubuntu latest.
+
+Also installs [GAMS Transfer R](https://www.gams.com/latest/docs/API_R_GAMSTRANSFER.html).
 
 `Dockerfile` adapted from https://github.com/iiasa/gams-docker.
 
